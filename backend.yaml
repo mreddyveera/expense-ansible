@@ -15,7 +15,6 @@
     loop:
     - nodejs
     - mysql
-    - cryptography
 
   - name: create a user
     ansible.builtin.user:
@@ -47,7 +46,9 @@
 
   - name: install python libraries
     ansible.builtin.pip:
-      name: PyMySQL
+      name: 
+        - PyMySQL
+        - cryptography
       executable: pip3.9
 
   - name: import mysql data
