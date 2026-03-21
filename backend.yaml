@@ -3,7 +3,7 @@
   become: yes
   tasks:
   - name: Disable nodejs <20 version
-    ansible.builtin.comamnd: dnf module disable nodejs -y
+    ansible.builtin.command: dnf module disable nodejs -y
   
   - name: enable nodejs 20
     ansible.builtin.command: dnf module enable nodejs:20 -y
@@ -35,5 +35,3 @@
   - name: Install dependencies
     community.general.npm:
       path: /app
-
-  
