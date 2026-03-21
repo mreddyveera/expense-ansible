@@ -14,8 +14,8 @@
       name: "{{item}}"
       state: installed
     loop:
-    - cryptography
     - mysql-server
+    #- cryptography
     
   - name: Start and enable mysql server
     ansible.builtin.service:
