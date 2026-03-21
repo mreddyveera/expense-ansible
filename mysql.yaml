@@ -23,11 +23,9 @@
       state: started
       enabled: yes
   
-  - name: Connect to mysql server
+  - name: Connect to mysql server via socket
     community.mysql.mysql_info:
-      login_user: root
-      login_password: "{{ mysql_root_password }}"
-      login_host: 172.31.23.102
+    login_unix_socket: /var/lib/mysql/mysql.sock
     register: mysql_info
     ignore_errors: true
 
