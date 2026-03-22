@@ -2,7 +2,7 @@
   hosts: backend
   become: yes
   vars:
-    mysql_host: 172.31.20.18
+    mysql_host: 172.31.23.236
   tasks:
   - name: Disable nodejs version
     ansible.builtin.command: dnf module disable nodejs -y
