@@ -3,7 +3,7 @@
   become: yes
   tasks:
   - name: Install Mysql server
-    ansible.buitln.packge:
+    ansible.builtln.packge:
       name: mysql-server
       state: installed
   - name: start and enable mysql server
