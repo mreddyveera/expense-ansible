@@ -1,51 +1,65 @@
 - name: Configuring mysql server
   hosts: mysql
   become: yes
-  vars:
-    mysql_root_password: ExpenseApp@1
   tasks:
-  - name: Install MYSQL libraries
-    ansible.builtin.pip:
-      name: "{{ item }}"
-      executable: pip3.9
-    loop:
-    - PyMySQL
-    - cryptography
-  
-  - name: Installing mysql server
+  - name: Install MYSQL server
     ansible.builtin.package:
-      name: "{{ item }}"
-      state: installed
-    loop:
-    - mysql-server
-    
-  - name: Start and enable mysql server
+      name: mysql-server
+      state: present
+  - name: Start and enable the Mysql service
     ansible.builtin.service:
       name: mysqld
-      state: started
       enabled: yes
-
-  - name: Set root password (local)
+      state: started
+  - name: Install Mysql , puthoin dependencies
+    ansible.builtin.pip:
+      name:
+        - PyMySQL
+        - cryptography
+      executable: pip3
+  
+  - name: SetRoot password using socket
     community.mysql.mysql_user:
-    name: root
-    host: localhost
-    password: "{{ mysql_root_password }}"
-    login_unix_socket: /var/lib/mysql/mysql.sock
-    check_implicit_admin: yes
+      name: root
+      host: localhost
+      password: ExpenseApp@1
+      login_unix_socket: /var/lib/mysql/mysql.sock
+      check_implicit_admin: yes
+
+  - name: Switch root to password auth
+    community.mysql.mysql_user:
+      name: root
+      host: localhost
+      password: ExpenseApp@1
+      plugin: mysql_native_password
+      login_unix_socket: /var/lib/mysql/mysql.sock
+
+  - name: Allow remote connections
+    ansible.builtin.lineinfile:
+      path: /etc/my.cnf
+      regexp: '^bind-address'
+      line: 'bind-address=0.0.0.0'
+
+  - name: Restart MySQL
+    ansible.builtin.service:
+      name: mysqld
+      state: restarted
 
   - name: Allow root remote access
     community.mysql.mysql_user:
-    name: root
-    host: '%'
-    password: "{{ mysql_root_password }}"
-    priv: '*.*:ALL,GRANT'
-    login_user: root
-    login_password: "{{ mysql_root_password }}"
+      name: root
+      host: '%'
+      password: ExpenseApp@1
+      priv: '*.*:ALL,GRANT'
+      login_user: root
+      login_password: ExpenseApp@1
 
-  - name: print the output
+  - name: Verify DB connection
+    community.mysql.mysql_info:
+      login_user: root
+      login_password: ExpenseApp@1
+    register: mysql_info
+
+  - name: Message
     ansible.builtin.debug:
-      msg: " {{mysql_info}} "
-
-  - name: setup root password
-    ansible.builtin.command: " mysql_secure_installation --set-root-pass {{ mysql_root_password }} "
-    when: mysql_info.failed is true
+      msg:  "{{ mysql_info }}"
