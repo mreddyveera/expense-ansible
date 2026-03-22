@@ -6,16 +6,18 @@
   tasks:
   - name: Install MYSQL libraries
     ansible.builtin.pip:
-      name: PyMySQL
+      name: "{{ item }}"
       executable: pip3.9
+    loop:
+    - PyMySQL
+    - cryptography
   
   - name: Installing mysql server
     ansible.builtin.package:
-      name: "{{item}}"
+      name: "{{ item }}"
       state: installed
     loop:
     - mysql-server
-    - cryptography
     
   - name: Start and enable mysql server
     ansible.builtin.service:
