@@ -24,12 +24,23 @@
       name: mysqld
       state: started
       enabled: yes
-  
-  - name: Connect to mysql server
-    community.mysql.mysql_info:
-      login_unix_socket: /var/lib/mysql/mysql.sock
-    register: mysql_info
-    ignore_errors: true
+
+  - name: Set root password (local)
+    community.mysql.mysql_user:
+    name: root
+    host: localhost
+    password: "{{ mysql_root_password }}"
+    login_unix_socket: /var/lib/mysql/mysql.sock
+    check_implicit_admin: yes
+
+  - name: Allow root remote access
+    community.mysql.mysql_user:
+    name: root
+    host: '%'
+    password: "{{ mysql_root_password }}"
+    priv: '*.*:ALL,GRANT'
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
 
   - name: print the output
     ansible.builtin.debug:
