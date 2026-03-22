@@ -1,6 +1,8 @@
 - name: Intsall MySQL server and configuration
   hosts: mysql
   become: yes
+  vars:
+    mysql_password: ExpenseApp@1
   tasks:
   - name: Install mysql libralies
     ansible.builtin.pip:
@@ -15,7 +17,7 @@
       name: mysqld
       state: started
       enabled: yes
-  #Setting up user and password
+  #login
   - name: connect to mysql server
     community.mysql.mysql_info:
       login_user: root
@@ -27,3 +29,7 @@
   - name:
     ansible.builtin.debug:
       msg: "{{ mysql_info }}"
+
+  - name: setup root login_password
+    ansbible.builtin.command: "mysql_secure_installation --set-root-pass {{ mysql_password }}"
+    when: mysql_info.failed is true
