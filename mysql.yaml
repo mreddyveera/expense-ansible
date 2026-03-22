@@ -11,7 +11,4 @@
       name: mysqld
       state: started
       enabled: yes
-  
-  #Setting up password
-  - name: Connect to myusql server
-    
+
