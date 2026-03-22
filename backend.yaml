@@ -39,6 +39,12 @@
       path: /app
       state: latest
 
+  - name: Copy backend service file
+    ansible.builtin.copy:
+      src: backend.service
+      dest: /etc/systemd/system/backend.service
+      mode: '0644'
+
   - name: Reload systemd and restart backend
     ansible.builtin.systemd_service:
       name: backend
