@@ -1,65 +1,17 @@
-- name: Configuring mysql server
+- name: Intsall MySQL server and configuration
   hosts: mysql
   become: yes
   tasks:
-  - name: Install MYSQL server
-    ansible.builtin.package:
+  - name: Install Mysql server
+    ansible.buitln.packge:
       name: mysql-server
-      state: present
-  - name: Start and enable the Mysql service
+      state: installed
+  - name: start and enable mysql server
     ansible.builtin.service:
       name: mysqld
-      enabled: yes
       state: started
-  - name: Install Mysql , puthoin dependencies
-    ansible.builtin.pip:
-      name:
-        - PyMySQL
-        - cryptography
-      executable: pip3
+      enabled: yes
   
-  - name: SetRoot password using socket
-    community.mysql.mysql_user:
-      name: root
-      host: localhost
-      password: ExpenseApp@1
-      login_unix_socket: /var/lib/mysql/mysql.sock
-      check_implicit_admin: yes
-
-  - name: Switch root to password auth
-    community.mysql.mysql_user:
-      name: root
-      host: localhost
-      password: ExpenseApp@1
-      plugin: mysql_native_password
-      login_unix_socket: /var/lib/mysql/mysql.sock
-
-  - name: Allow remote connections
-    ansible.builtin.lineinfile:
-      path: /etc/my.cnf
-      regexp: '^bind-address'
-      line: 'bind-address=0.0.0.0'
-
-  - name: Restart MySQL
-    ansible.builtin.service:
-      name: mysqld
-      state: restarted
-
-  - name: Allow root remote access
-    community.mysql.mysql_user:
-      name: root
-      host: '%'
-      password: ExpenseApp@1
-      priv: '*.*:ALL,GRANT'
-      login_user: root
-      login_password: ExpenseApp@1
-
-  - name: Verify DB connection
-    community.mysql.mysql_info:
-      login_user: root
-      login_password: ExpenseApp@1
-    register: mysql_info
-
-  - name: Message
-    ansible.builtin.debug:
-      msg:  "{{ mysql_info }}"
+  #Setting up password
+  - name: Connect to myusql server
+    
