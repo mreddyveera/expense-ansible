@@ -3,7 +3,7 @@
   become: yes
   tasks:
   - name: Install Mysql server
-    ansible.builtin.package:
+    ansible.builtlin.package:
       name: mysql-server
       state: installed
   - name: start and enable mysql server
@@ -11,4 +11,14 @@
       name: mysqld
       state: started
       enabled: yes
-
+  #Setting up user and password
+  - name: connect to mysql server
+    community.mysql.mysql_info:
+      login_user: root
+      login_password: ExpenseApp@1
+      login_host: 172.31.20.18
+    register: mysql_info
+  #Print the output
+  - name:
+    ansible.builtin.debug:
+      msg: "{{ mysql_info }}"
